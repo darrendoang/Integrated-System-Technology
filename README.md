@@ -113,7 +113,7 @@ Contributions to the Fitness API Service are welcome. Please follow the standard
 
 ## License
 
-Specify your license here, or state that the project is unlicensed and available for free use.
+This project is unlicensed and available for free use.
 
 ---
 
