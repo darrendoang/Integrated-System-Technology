@@ -1,0 +1,24 @@
+[
+    {
+        "coach_id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "phone_number": "+628962569120",
+        "experience_years": 5,
+        "hourly_rate_idr": 30000,
+        "availability": "Weekdays 9AM-5PM",
+        "bio": "Certified fitness trainer with expertise in strength training and cardio workouts."
+    },
+    {
+        "coach_id": 2,
+        "first_name": "Jane",
+        "last_name": "Smith",
+        "email": "jane.smith@example.com",
+        "phone_number": "+628962569121",
+        "experience_years": 4,
+        "hourly_rate_idr": 25000,
+        "availability": "Weekdays 10AM-6PM",
+        "bio": "Experienced yoga instructor with a focus on mindfulness and relaxation."
+    }
+]
