@@ -1,0 +1,12 @@
+[
+    {
+        "username" : "darren",
+        "hashed_password" : "$2b$05$.eveZwjKPZmeL.zzguTez.l4V508mLHhOcJPffdO9ucx2rZoQMNwW",
+        "disabled" : "False"
+    },
+    {
+        "username" : "dory",
+        "hashed_password" : "$2b$05$cwQ5BmXt9cGsSB4MZ5.bbOPjtVNXyNer71wflRbMxIgMsp1N1YdaG",
+        "disabled" : "False"
+    }
+]
