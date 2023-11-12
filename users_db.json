@@ -2,11 +2,13 @@
     {
         "username" : "darren",
         "hashed_password" : "$2b$05$.eveZwjKPZmeL.zzguTez.l4V508mLHhOcJPffdO9ucx2rZoQMNwW",
-        "disabled" : "False"
+        "disabled" : false,
+        "role" : "admin"
     },
     {
         "username" : "dory",
         "hashed_password" : "$2b$05$cwQ5BmXt9cGsSB4MZ5.bbOPjtVNXyNer71wflRbMxIgMsp1N1YdaG",
-        "disabled" : "False"
+        "disabled" : false,
+        "role" : "customer"
     }
 ]

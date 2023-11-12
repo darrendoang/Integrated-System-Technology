@@ -17,6 +17,8 @@ class User(BaseModel):
     username: str
     hashed_password: str
     disabled: bool = False
+    role: str  
+
 
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -41,6 +43,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta if expires_delta else datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
+    to_encode.update({"role": data["role"]}) 
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # Models
@@ -111,7 +114,7 @@ async def login_for_access_token(request_data: UserLoginRequest):
     
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user_dict["username"]}, expires_delta=access_token_expires
+        data={"sub": user_dict["username"], "role": user_dict["role"]}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -137,6 +140,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 # Endpoints for Coaches
 @app.get("/coaches", response_model=List[Coach])
 async def get_coaches(current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
     return coaches
 
 
@@ -147,6 +152,8 @@ async def root():
 
 @app.post("/coaches", response_model=Coach)
 async def add_coach(coach: Coach, current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
     if any(c["coach_id"] == coach.coach_id for c in coaches):
         raise HTTPException(status_code=400, detail="Coach with this ID already exists")
     coaches.append(coach.dict())
@@ -155,6 +162,8 @@ async def add_coach(coach: Coach, current_user: User = Depends(get_current_user)
 
 @app.put("/coaches/{coach_id}", response_model=Coach)
 async def update_coach(coach_id: int, updated_coach: Coach, current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
     for idx, c in enumerate(coaches):
         if c['coach_id'] == coach_id:
             coaches[idx] = updated_coach.dict()
@@ -164,6 +173,8 @@ async def update_coach(coach_id: int, updated_coach: Coach, current_user: User =
 
 @app.delete("/coaches/{coach_id}", response_model=dict)
 async def delete_coach(coach_id: int, current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
     global coaches
     coaches = [coach for coach in coaches if coach['coach_id'] != coach_id]
     write_json(coaches, "coaches.json")
@@ -176,6 +187,8 @@ async def get_classes():
 
 @app.post("/classes", response_model=FitnessClass)
 async def add_class(fitness_class: FitnessClass, current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
     if any(f_class["class_id"] == fitness_class.class_id for f_class in fitness_classes):
         raise HTTPException(status_code=400, detail="Class with this ID already exists")
     fitness_classes.append(fitness_class.dict())
@@ -184,6 +197,8 @@ async def add_class(fitness_class: FitnessClass, current_user: User = Depends(ge
 
 @app.put("/classes/{class_id}", response_model=FitnessClass)
 async def update_class(class_id: int, updated_class: FitnessClass, current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
     for idx, f_class in enumerate(fitness_classes):
         if f_class['class_id'] == class_id:
             fitness_classes[idx] = updated_class.dict()
@@ -193,6 +208,8 @@ async def update_class(class_id: int, updated_class: FitnessClass, current_user:
 
 @app.delete("/classes/{class_id}", response_model=dict)
 async def delete_class(class_id: int, current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
     global fitness_classes
     fitness_classes = [f_class for f_class in fitness_classes if f_class['class_id'] != class_id]
     write_json(fitness_classes, "fitness_classes.json")
@@ -211,4 +228,6 @@ async def register_for_class(registration: Registration, current_user: User = De
 
 @app.get("/registrations", response_model=List[Registration])
 async def get_registrations(current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
     return registrations
