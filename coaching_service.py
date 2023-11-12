@@ -19,6 +19,12 @@ class User(BaseModel):
     disabled: bool = False
     role: str  
 
+# New model for user registration
+class UserRegistration(BaseModel):
+    username: str
+    password: str
+    role: str
+
 
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -103,7 +109,24 @@ except FileNotFoundError:
 
 
 
-@app.post("/token", response_model=Token)
+@app.post("/signup", response_model=User)
+async def create_user(user: UserRegistration):
+    users = read_json("users_db.json")
+    if any(u["username"] == user.username for u in users):
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    hashed_password = get_password_hash(user.password)
+    new_user = {
+        "username": user.username,
+        "hashed_password": hashed_password,
+        "disabled": False,
+        "role": user.role
+    }
+    users.append(new_user)
+    write_json(users, "users_db.json")
+    return new_user
+
+@app.post("/login", response_model=Token)
 async def login_for_access_token(request_data: UserLoginRequest):
     users = read_json("users_db.json")
     user_dict = next((user for user in users if user["username"] == request_data.username), None)
