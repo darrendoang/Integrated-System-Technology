@@ -205,7 +205,7 @@ async def delete_coach(coach_id: int, current_user: User = Depends(get_current_u
 
 # Endpoints for Fitness Classes
 @app.get("/classes", response_model=List[FitnessClass])
-async def get_classes():
+async def get_classes(current_user: User = Depends(get_current_user)):
     return fitness_classes
 
 @app.post("/classes", response_model=FitnessClass)
