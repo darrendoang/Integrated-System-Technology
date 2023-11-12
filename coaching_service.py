@@ -66,6 +66,9 @@ class Registration(BaseModel):
     user_id: int
     class_id: int
 
+class UserLoginRequest(BaseModel):
+    username: str
+    password: str
 # Utility functions to read and write JSON files
 def read_json(filename):
     with open(filename, "r") as file:
@@ -95,13 +98,15 @@ except FileNotFoundError:
     registrations = []
     write_json(registrations, "registrations.json")
 
+
+
 @app.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(request_data: UserLoginRequest):
     users = read_json("users_db.json")
-    user_dict = next((user for user in users if user["username"] == form_data.username), None)
+    user_dict = next((user for user in users if user["username"] == request_data.username), None)
     if not user_dict:
         raise HTTPException(status_code=400, detail="Incorrect username")
-    if not verify_password(form_data.password, user_dict["hashed_password"]):
+    if not verify_password(request_data.password, user_dict["hashed_password"]):
         raise HTTPException(status_code=400, detail="Incorrect password")
     
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
