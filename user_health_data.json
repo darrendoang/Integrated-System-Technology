@@ -1,0 +1,19 @@
+[
+    {
+        "user_id": 1,
+        "weight": 70.0,
+        "height": 175.0,
+        "age": 25,
+        "gender": "male",
+        "goal": "maintain"
+    },
+    {
+        "user_id": 2,
+        "weight": 65.0,
+        "height": 160.0,
+        "age": 30,
+        "gender": "female",
+        "goal": "loss"
+    }
+  
+]

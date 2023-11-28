@@ -1,20 +1,44 @@
 [
     {
+        "user_id": 1,
         "username": "darren",
         "hashed_password": "$2b$05$.eveZwjKPZmeL.zzguTez.l4V508mLHhOcJPffdO9ucx2rZoQMNwW",
         "disabled": false,
         "role": "admin"
     },
     {
+        "user_id": 2,
         "username": "dory",
         "hashed_password": "$2b$05$cwQ5BmXt9cGsSB4MZ5.bbOPjtVNXyNer71wflRbMxIgMsp1N1YdaG",
         "disabled": false,
         "role": "customer"
     },
     {
+        "user_id": 3,
         "username": "darren_2",
         "hashed_password": "$2b$12$kRb/4W4VoOyuGX1nRRip6enbEMPIz46IDGdh4Tc.LtzMwf1H/sABK",
         "disabled": false,
         "role": "admin"
+    },
+    {
+        "user_id": 4,
+        "username": "brielle",
+        "hashed_password": "$2b$12$9YM2huV753lR/vKiYoj4COD0/S9kv6F0wVsVXyWMmoTA1FP5MjhQm",
+        "disabled": false,
+        "role": "admin"
+    },
+    {
+        "user_id": 5,
+        "username": "string",
+        "hashed_password": "$2b$12$pz3vninDmCFYASivpa5bNOPmyhrjJItDI9bl4Y.M/4i88NIfb4QDu",
+        "disabled": false,
+        "role": "string"
+    },
+    {
+        "user_id": 6,
+        "username": "bruce",
+        "hashed_password": "$2b$12$ViuaFxM82rO6rKjYWQBEUOD5qSMIOQKkMt2hDO.R9NYk4e5N0XL.W",
+        "disabled": false,
+        "role": "customer"
     }
 ]
