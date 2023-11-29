@@ -1,6 +1,14 @@
-// src/components/Classes.js
 import React, { useState, useEffect } from 'react';
 import axiosInstance from './axiosInstance';
+import {
+  Box,
+  Heading,
+  Text,
+  List,
+  ListItem,
+  UnorderedList,
+  CircularProgress,
+} from '@chakra-ui/react';
 
 const Classes = () => {
   const [classes, setClasses] = useState([]);
@@ -22,30 +30,58 @@ const Classes = () => {
     fetchClasses();
   }, []);
 
-  if (isLoading) return <p>Loading classes...</p>;
-  if (error) return <p>{error}</p>;
+  if (isLoading) {
+    return (
+      <Box textAlign="center" mt={8}>
+        <CircularProgress isIndeterminate color="teal.300" />
+        <Text mt={4}>Loading classes...</Text>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box mt={8} textAlign="center">
+        <Text color="red.500">{error}</Text>
+      </Box>
+    );
+  }
 
   return (
-    <div>
-      <h1>Available Classes</h1>
+    <Box mt={8}>
+      <Heading as="h1" size="xl" textAlign="center" mb={4}>
+        Available Classes
+      </Heading>
       {classes.length > 0 ? (
-        <ul>
+        <List spacing={4} maxW="lg" mx="auto">
           {classes.map((classItem) => (
-            <li key={classItem.class_id}>
-              <div>
-                <h2>{classItem.class_type}</h2>
-                <p>Coach: {classItem.coach_id}</p>
-                <p>Start Time: {classItem.start_time}</p>
-                <p>End Time: {classItem.end_time}</p>
+            <ListItem key={classItem.class_id}>
+              <Box
+                borderWidth="1px"
+                p={4}
+                borderRadius="lg"
+                boxShadow="md"
+                bg="white"
+                transition="transform 0.2s"
+                _hover={{ transform: 'scale(1.02)' }}
+              >
+                <Heading as="h2" size="lg">
+                  {classItem.class_type}
+                </Heading>
+                <Text>Coach: {classItem.coach_id}</Text>
+                <Text>Start Time: {classItem.start_time}</Text>
+                <Text>End Time: {classItem.end_time}</Text>
                 {/* Add more details as needed */}
-              </div>
-            </li>
+              </Box>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       ) : (
-        <p>No classes available.</p>
+        <Text textAlign="center" mt={4}>
+          No classes available.
+        </Text>
       )}
-    </div>
+    </Box>
   );
 };
 

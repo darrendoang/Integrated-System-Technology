@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import axiosInstance from './axiosInstance';
 import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Heading,
+  Input,
+  Stack,
+  Button,
+  Text,
+  FormControl,
+  FormLabel,
+  Link, // Import Link from Chakra UI to create a link to the Register page
+} from '@chakra-ui/react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -28,32 +39,44 @@ const Login = () => {
     }
   };
 
-
-
-
   return (
-    <div>
+    <Box maxW="md" mx="auto" mt={8} p={4} borderWidth="1px" borderRadius="md">
+      <Heading as="h1" size="xl" mb={4}>
+        Log In
+      </Heading>
       <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Log In</button>
+        <Stack spacing={4}>
+          <FormControl isRequired>
+            <FormLabel>Username:</FormLabel>
+            <Input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Password:</FormLabel>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </FormControl>
+          {error && (
+            <Text color="red.500" fontSize="sm">
+              {error}
+            </Text>
+          )}
+          <Button type="submit" colorScheme="teal" size="lg" fontSize="md">
+            Log In
+          </Button>
+          {/* Add a "Register" button that redirects to the register page */}
+          <Link onClick={() => navigate('/register')} color="teal.500" fontSize="sm">
+            Register
+          </Link>
+        </Stack>
       </form>
-    </div>
+    </Box>
   );
 };
 
