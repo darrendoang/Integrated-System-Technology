@@ -143,6 +143,7 @@ async def create_user(user: UserRegistration):
     return new_user
 
 
+
 @app.post("/login", response_model=Token)
 async def login_for_access_token(request_data: UserLoginRequest):
     users = read_json("users_db.json")
@@ -156,7 +157,12 @@ async def login_for_access_token(request_data: UserLoginRequest):
     access_token = create_access_token(
         data={"sub": user_dict["username"], "role": user_dict["role"]}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer",
+        "user_id": user_dict["user_id"]  # Include the user_id in the response
+    }
+
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
@@ -189,6 +195,9 @@ async def get_coaches(current_user: User = Depends(get_current_user)):
 async def root():
     return {"message": "Welcome to the API!"}
 
+@app.get("/current_user", response_model=User)
+async def get_current_user_data(current_user: User = Depends(get_current_user)):
+    return current_user
 
 @app.post("/coaches", response_model=Coach)
 async def add_coach(coach: Coach, current_user: User = Depends(get_current_user)):
@@ -328,108 +337,108 @@ async def get_registrations(current_user: User = Depends(get_current_user)):
 
 #     return {"detail": "Health data deleted successfully"}
 
-@app.get("/get_bmr_and_class_recommendation")
-async def get_bmr_and_class_recommendation(current_user: User = Depends(get_current_user)):
-    try:
-        # Load all class recommendations
-        class_recommendations = read_json("class_recommendations.json")
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Class recommendations not found")
+# @app.get("/get_bmr_and_class_recommendation")
+# async def get_bmr_and_class_recommendation(current_user: User = Depends(get_current_user)):
+#     try:
+#         # Load all class recommendations
+#         class_recommendations = read_json("class_recommendations.json")
+#     except FileNotFoundError:
+#         raise HTTPException(status_code=404, detail="Class recommendations not found")
 
-    # Find recommendation for the current user
-    user_recommendation = next((rec for rec in class_recommendations if rec["user_id"] == current_user.user_id), None)
+#     # Find recommendation for the current user
+#     user_recommendation = next((rec for rec in class_recommendations if rec["user_id"] == current_user.user_id), None)
     
-    if user_recommendation is None:
-        raise HTTPException(status_code=404, detail="No recommendation found for the user")
+#     if user_recommendation is None:
+#         raise HTTPException(status_code=404, detail="No recommendation found for the user")
 
-    return user_recommendation
+#     return user_recommendation
 
-@app.delete("/delete_bmr_and_class_recommendation")
-async def delete_bmr_and_class_recommendation(current_user: User = Depends(get_current_user)):
-    try:
-        # Load all class recommendations
-        class_recommendations = read_json("class_recommendations.json")
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Class recommendations not found")
+# @app.delete("/delete_bmr_and_class_recommendation")
+# async def delete_bmr_and_class_recommendation(current_user: User = Depends(get_current_user)):
+#     try:
+#         # Load all class recommendations
+#         class_recommendations = read_json("class_recommendations.json")
+#     except FileNotFoundError:
+#         raise HTTPException(status_code=404, detail="Class recommendations not found")
 
-    # Filter out the recommendation for the current user
-    class_recommendations = [rec for rec in class_recommendations if rec["user_id"] != current_user.user_id]
+#     # Filter out the recommendation for the current user
+#     class_recommendations = [rec for rec in class_recommendations if rec["user_id"] != current_user.user_id]
     
-    # Save the updated recommendations back to the file
-    write_json(class_recommendations, "class_recommendations.json")
+#     # Save the updated recommendations back to the file
+#     write_json(class_recommendations, "class_recommendations.json")
 
-    return {"detail": "Recommendation deleted successfully"}
-
-
-def calculate_bmr(weight, height, age, gender, goal):
-    goal_multipliers = {
-        'maintain': 1.0,
-        'mild_loss': 0.83,
-        'loss': 0.66,
-        'extreme_loss': 0.32,
-        'mild_gain': 1.17,
-        'gain': 1.34,
-        'extreme_gain': 1.68
-    }
-    if gender == 'male':
-        bmr = (10 * weight + 6.25 * height - 5 * age + 5)
-    else:
-        bmr = (10 * weight + 6.25 * height - 5 * age - 161)
-    return bmr * goal_multipliers[goal]
+#     return {"detail": "Recommendation deleted successfully"}
 
 
-@app.post("/get_bmr_and_class_recommendation")
-async def get_bmr_and_class_recommendation(health_data: UserHealthData, current_user: User = Depends(get_current_user)):
-    # Calculate the BMR with the provided health data
-    bmr = calculate_bmr(health_data.weight, health_data.height, health_data.age, health_data.gender, health_data.goal)
+# def calculate_bmr(weight, height, age, gender, goal):
+#     goal_multipliers = {
+#         'maintain': 1.0,
+#         'mild_loss': 0.83,
+#         'loss': 0.66,
+#         'extreme_loss': 0.32,
+#         'mild_gain': 1.17,
+#         'gain': 1.34,
+#         'extreme_gain': 1.68
+#     }
+#     if gender == 'male':
+#         bmr = (10 * weight + 6.25 * height - 5 * age + 5)
+#     else:
+#         bmr = (10 * weight + 6.25 * height - 5 * age - 161)
+#     return bmr * goal_multipliers[goal]
+
+
+# @app.post("/get_bmr_and_class_recommendation")
+# async def get_bmr_and_class_recommendation(health_data: UserHealthData, current_user: User = Depends(get_current_user)):
+#     # Calculate the BMR with the provided health data
+#     bmr = calculate_bmr(health_data.weight, health_data.height, health_data.age, health_data.gender, health_data.goal)
     
-    # Get a class recommendation based on the user's goal
-    class_recommendation = get_class_recommendation(health_data.goal, bmr)
+#     # Get a class recommendation based on the user's goal
+#     class_recommendation = get_class_recommendation(health_data.goal, bmr)
     
-    # Prepare the recommendation data
-    recommendation = {
-        "user_id": current_user.user_id,
-        "bmr": bmr,
-        "class_recommendation": class_recommendation
-    }
+#     # Prepare the recommendation data
+#     recommendation = {
+#         "user_id": current_user.user_id,
+#         "bmr": bmr,
+#         "class_recommendation": class_recommendation
+#     }
     
-    # Save the recommendation data to class_recommendations.json
-    try:
-        class_recommendations = read_json("class_recommendations.json")
-    except FileNotFoundError:
-        class_recommendations = []
+#     # Save the recommendation data to class_recommendations.json
+#     try:
+#         class_recommendations = read_json("class_recommendations.json")
+#     except FileNotFoundError:
+#         class_recommendations = []
 
-    class_recommendations.append(recommendation)
-    write_json(class_recommendations, "class_recommendations.json")
+#     class_recommendations.append(recommendation)
+#     write_json(class_recommendations, "class_recommendations.json")
 
-    return recommendation
+#     return recommendation
 
-def get_class_recommendation(goal, bmr):
-    # Read the fitness classes data
-    try:
-        fitness_classes = read_json("fitness_classes.json")
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Fitness classes data not found")
+# def get_class_recommendation(goal, bmr):
+#     # Read the fitness classes data
+#     try:
+#         fitness_classes = read_json("fitness_classes.json")
+#     except FileNotFoundError:
+#         raise HTTPException(status_code=404, detail="Fitness classes data not found")
     
-    # Simple logic for class recommendation based on goal and BMR
-    if goal in ['mild_loss', 'loss', 'extreme_loss'] and bmr < 2000:
-        # For weight loss goals, classes with higher calorie burn are preferable
-        class_types = ['HIIT', 'Cardio', 'Abs Training']
-    elif goal in ['mild_gain', 'gain', 'extreme_gain'] and bmr >1500:
-        # For weight gain goals, consider classes that focus on muscle building
-        class_types = ['MUSCLE Training', 'Abs Training']
-    else:  # 'maintain'
-        # For maintaining weight, a balance of different class types could be suggested
-        class_types = ['Yoga', 'Pilates', 'MUSCLE Training', 'Abs Training']
+#     # Simple logic for class recommendation based on goal and BMR
+#     if goal in ['mild_loss', 'loss', 'extreme_loss'] and bmr < 2000:
+#         # For weight loss goals, classes with higher calorie burn are preferable
+#         class_types = ['HIIT', 'Cardio', 'Abs Training']
+#     elif goal in ['mild_gain', 'gain', 'extreme_gain'] and bmr >1500:
+#         # For weight gain goals, consider classes that focus on muscle building
+#         class_types = ['MUSCLE Training', 'Abs Training']
+#     else:  # 'maintain'
+#         # For maintaining weight, a balance of different class types could be suggested
+#         class_types = ['Yoga', 'Pilates', 'MUSCLE Training', 'Abs Training']
 
-    # Filter classes based on types that match the goal
-    suitable_classes = [c for c in fitness_classes if c['class_type'] in class_types]
+#     # Filter classes based on types that match the goal
+#     suitable_classes = [c for c in fitness_classes if c['class_type'] in class_types]
 
 
-    if not suitable_classes:
-        raise HTTPException(status_code=404, detail="No suitable fitness class found for the goal")
+#     if not suitable_classes:
+#         raise HTTPException(status_code=404, detail="No suitable fitness class found for the goal")
 
-    # Return a random suitable class for variation
-    # In a real-world scenario, you might want to implement a more sophisticated selection process
-    import random
-    return random.choice(suitable_classes)
+#     # Return a random suitable class for variation
+#     # In a real-world scenario, you might want to implement a more sophisticated selection process
+#     import random
+#     return random.choice(suitable_classes)

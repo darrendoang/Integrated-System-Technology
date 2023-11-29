@@ -1,23 +1,23 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar'; // Import the Sidebar component
+import Sidebar from './components/Sidebar';
 import Login from './components/Login';
 import Home from './components/Home';
 import Classes from './components/Classes';
-import Register from './components/Register'; // Import the Register component
-import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
-import './App.css'; // Ensure you have this CSS for basic styling
+import Register from './components/Register';
+import PrivateRoute from './components/PrivateRoute';
+import CalorieCalculator from './components/CalorieCalculator'; // Import the CalorieCalculator component
+import './App.css';
 
 const App = () => {
   return (
     <Router>
       <div className="app">
-        {/* Render the Sidebar component alongside your private routes */}
         <Sidebar />
         <div className="content">
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} /> {/* Add the Register route */}
+            <Route path="/register" element={<Register />} />
             <Route 
               path="/"
               element={
@@ -39,6 +39,15 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <Classes />
+                </PrivateRoute>
+              } 
+            />
+      
+            <Route 
+              path="/calorie-calculator"
+              element={
+                <PrivateRoute>
+                  <CalorieCalculator />
                 </PrivateRoute>
               } 
             />

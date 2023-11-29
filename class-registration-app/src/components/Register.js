@@ -8,9 +8,13 @@ import {
   Button,
   Text,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
-import axiosInstance from './axiosInstance';
+// Import axios instances
+import api from './axiosInstance';
+
+// Then use api.axiosInstance and api.axiosInstance2 to refer to your Axios instances
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +26,7 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const navigate = useNavigate(); // Create a navigate function
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,30 +47,31 @@ const Register = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/signup', {
+      // Register on your API
+      const responseYourAPI = await api.axiosInstance.post('/signup', {
         username: formData.username,
         password: formData.password,
-        role: 'customer', // Automatically assign the role as 'customer'
+        role: 'customer',
       });
 
-      if (response.status === 200) {
-        if (response.data && response.data.username) {
-          setSuccessMessage('Registration successful. You can now log in.');
-          navigate('/login');
-        } else if (response.data) {
-          setErrorMessage(response.data);
-        } else {
-          setErrorMessage('An unknown error occurred');
-        }
+      // Prepare data for the external API
+      const userForExternalAPI = {
+        username: formData.username,
+        password: formData.password,
+      };
+
+      // Register on the external API
+      const responseExternalAPI = await api.axiosInstance2.post('/register', userForExternalAPI);
+
+      // Check if both registrations are successful
+      if (responseYourAPI.status === 200 && responseExternalAPI.status === 200) {
+        setSuccessMessage('Registration successful. You can now log in.');
+        navigate('/login');
       } else {
-        setErrorMessage('An unknown error occurred');
+        setErrorMessage('Registration failed in one of the systems');
       }
     } catch (err) {
-      if (err.response && err.response.data) {
-        setErrorMessage(err.response.data);
-      } else {
-        setErrorMessage('An unknown error occurred');
-      }
+      setErrorMessage(err.response ? err.response.data.detail : 'An unknown error occurred');
     }
   };
 
@@ -106,9 +111,8 @@ const Register = () => {
             required
           />
         </FormControl>
-        {errorMessage && <Text color="red.500">{JSON.stringify(errorMessage)}</Text>
-}
-        {successMessage && <Text color="green.500">{JSON.stringify(successMessage)}</Text>}
+        {errorMessage && <Text color="red.500">{errorMessage}</Text>}
+        {successMessage && <Text color="green.500">{successMessage}</Text>}
         <Button type="submit" mt={4} colorScheme="teal">
           Register
         </Button>

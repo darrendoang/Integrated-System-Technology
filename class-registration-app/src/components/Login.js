@@ -1,39 +1,52 @@
 import React, { useState } from 'react';
-import axiosInstance from './axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import {
-  Box,
-  Heading,
-  Input,
-  Stack,
-  Button,
-  Text,
-  FormControl,
-  FormLabel,
-  Link, // Import Link from Chakra UI to create a link to the Register page
+  Box, Heading, Input, Stack, Button, Text, FormControl, FormLabel, Link
 } from '@chakra-ui/react';
+
+import api from './axiosInstance';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Hook to access the navigate function
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const response = await axiosInstance.post('/login', {
+      // Login to your API
+      const responseYourAPI = await api.axiosInstance.post('/login', {
         username,
         password,
       });
 
-      localStorage.setItem('token', response.data.access_token);
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
+      // Then, login to the external API
+      const responseExternalAPI = await api.axiosInstance2.post('/signin', {
+        username,
+        password,
+      });
 
-      // Navigate to the home page
-      navigate('/home');
+      // Check if both logins are successful
+      if (responseYourAPI.status === 200 && responseExternalAPI.status === 200) {
+        // Storing tokens
+        localStorage.setItem('token', responseYourAPI.data.access_token);
+        localStorage.setItem('token2', responseExternalAPI.data.token);
+
+        // Storing user ID
+        localStorage.setItem('userId', responseYourAPI.data.user_id);
+
+        // Update headers for future requests
+        api.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${responseYourAPI.data.access_token}`;
+        api.axiosInstance2.defaults.headers.common['Authorization'] = `Bearer ${responseExternalAPI.data.token}`;
+
+        // Navigate to the home page
+        navigate('/home');
+      } else {
+        setError('Login failed in one of the systems');
+      }
     } catch (err) {
       setError(err.response ? err.response.data.detail : 'An unknown error occurred');
     }
@@ -70,7 +83,6 @@ const Login = () => {
           <Button type="submit" colorScheme="teal" size="lg" fontSize="md">
             Log In
           </Button>
-          {/* Add a "Register" button that redirects to the register page */}
           <Link onClick={() => navigate('/register')} color="teal.500" fontSize="sm">
             Register
           </Link>
