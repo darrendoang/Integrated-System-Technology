@@ -1,43 +1,43 @@
 [
     {
-        "user_id": 1,
-        "username": "darren",
-        "hashed_password": "$2b$05$.eveZwjKPZmeL.zzguTez.l4V508mLHhOcJPffdO9ucx2rZoQMNwW",
-        "disabled": false,
-        "role": "admin"
-    },
-    {
-        "user_id": 2,
-        "username": "dory",
-        "hashed_password": "$2b$05$cwQ5BmXt9cGsSB4MZ5.bbOPjtVNXyNer71wflRbMxIgMsp1N1YdaG",
+        "user_id": 11,
+        "username": "user",
+        "hashed_password": "$2b$12$/kqjtxtWV/wnOyvoFeoJr.1f9mV7WgQKmFN5RjIrbEsky.OahBJla",
         "disabled": false,
         "role": "customer"
     },
     {
-        "user_id": 3,
-        "username": "darren_2",
-        "hashed_password": "$2b$12$kRb/4W4VoOyuGX1nRRip6enbEMPIz46IDGdh4Tc.LtzMwf1H/sABK",
+        "user_id": 12,
+        "username": "admin",
+        "hashed_password": "$2b$12$Dia/BQd9JVauIRlJOnMN.ONPT5pVT7XIv266mPdeJaizx0ZgDSKiC",
         "disabled": false,
         "role": "admin"
     },
     {
-        "user_id": 4,
-        "username": "brielle",
-        "hashed_password": "$2b$12$9YM2huV753lR/vKiYoj4COD0/S9kv6F0wVsVXyWMmoTA1FP5MjhQm",
+        "user_id": 13,
+        "username": "user2",
+        "hashed_password": "$2b$12$QBTgS8Eqc7S.iHbNhheBMe/mFnRBvpBkSgIDzZgai6MefBO0eesIe",
+        "disabled": false,
+        "role": "customer"
+    },
+    {
+        "user_id": 15,
+        "username": "admin2",
+        "hashed_password": "$2b$12$TZlVOhAzNPrHpc9eq32CAu2jLohCeweVFJy00EPaC0JEiaRFhf2qW",
         "disabled": false,
         "role": "admin"
     },
     {
-        "user_id": 5,
-        "username": "string",
-        "hashed_password": "$2b$12$pz3vninDmCFYASivpa5bNOPmyhrjJItDI9bl4Y.M/4i88NIfb4QDu",
+        "user_id": 16,
+        "username": "admin3",
+        "hashed_password": "$2b$12$koDp.a2yYgUmq8cm0xVWpuPlrqSINwJD3082d/EXnkdSXwmmZJlzq",
         "disabled": false,
-        "role": "string"
+        "role": "admin"
     },
     {
-        "user_id": 6,
-        "username": "bruce",
-        "hashed_password": "$2b$12$ViuaFxM82rO6rKjYWQBEUOD5qSMIOQKkMt2hDO.R9NYk4e5N0XL.W",
+        "user_id": 17,
+        "username": "user3",
+        "hashed_password": "$2b$12$26qNLiLENHCc0bEwHIkvJOfnJmSo8NTSHGUdwVIft6IxYMhGkEZTK",
         "disabled": false,
         "role": "customer"
     }
