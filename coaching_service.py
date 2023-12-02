@@ -61,7 +61,7 @@ class Token(BaseModel):
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + expires_delta if expires_delta else datetime.utcnow() + timedelta(minutes=15)
+    expire = datetime.utcnow() + expires_delta if expires_delta else datetime.utcnow() + timedelta(hours=12)
     to_encode.update({"exp": expire})
     to_encode.update({"role": data["role"]}) 
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -313,7 +313,14 @@ async def get_user_registrations(current_user: User = Depends(get_current_user))
     user_registrations = [reg for reg in registrations if reg["user_id"] == user_id]
     return user_registrations
 
+@app.get("/all-registrations", response_model=List[Registration])
+async def get_user_registrations(current_user: User = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access forbidden")
+    # Reload the registrations from the JSON file
+    registrations = read_json("registrations.json")
 
+    return registrations
 
 @app.delete("/cancel_registration/{class_id}", response_model=dict)
 async def cancel_registration(class_id: int, current_user: User = Depends(get_current_user)):
