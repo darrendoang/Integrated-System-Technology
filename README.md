@@ -1,4 +1,4 @@
-# Fitness API Service
+# Class Registration and Recommendation API Service
 
 ## Overview
 
