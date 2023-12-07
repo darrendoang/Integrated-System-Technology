@@ -171,6 +171,10 @@ Data is stored in JSON files (`coaches.json`, `fitness_classes.json`, `registrat
 
 The API is deployed and can be accessed at [https://fitness-coaching.azurewebsites.net/](https://fitness-coaching.azurewebsites.net/).
 
+## Deployed Web Link
+
+The Website is deployed and can be accessed at [https://class-registrations.netlify.app/](https://class-registrations.netlify.app/).
+
 ## Contributing
 
 Contributions to the Fitness API Service are welcome. Please follow the standard fork-and-pull request workflow.
