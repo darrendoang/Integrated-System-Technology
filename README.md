@@ -2,47 +2,44 @@
 
 ## Overview
 
-The Fitness API Service is a RESTful API designed to manage a fitness center's operations, including handling coaches, fitness classes, user registrations, and secure user authentication. This API, built using FastAPI, now incorporates advanced features like role-based access control and secure password handling, enhancing the security and functionality of the system.
+The Fitness API Service is a RESTful API designed to manage a fitness center's operations. Built using FastAPI, it incorporates advanced features like role-based access control and secure password handling, enhancing the system's security and functionality. The API handles coaches, fitness classes, user registrations, and provides secure user authentication.
 
 ## Features
 
-- **User Authentication**: Secure user authentication using JWT tokens.
-- **Role-Based Access Control**: Different access levels for users like 'admin' and 'regular' users.
-- **Coaches Management**: Add new coaches, retrieve coach details, update coach information, and delete coaches from the system.
-- **Fitness Classes Management**: Manage fitness class schedules, including adding new classes, updating class details, and deleting classes.
-- **User Registrations**: Handle user registrations for fitness classes, allowing users to sign up for classes and retrieve their registration details.
-- **Secure Password Handling**: Passwords are securely hashed using bcrypt, ensuring sensitive data protection.
-  
+- **User Authentication**: Implements JWT token-based secure authentication.
+- **Role-Based Access Control**: Admin and regular user roles with distinct access levels.
+- **Coaches Management**: Capabilities include adding, retrieving, updating, and deleting coach information.
+- **Fitness Classes Management**: Facilitates managing fitness class schedules; adding, updating, and deleting class information.
+- **User Registrations**: Manages user registrations for fitness classes with features to sign up and retrieve registration details.
+- **Secure Password Handling**: Utilizes bcrypt for secure password hashing.
+
 ## Authentication
 
-The API implements a secure authentication system using JWT (JSON Web Tokens) to manage user access. This system allows for secure transmission of information and ensures that only authenticated users can access certain endpoints.
+The API uses JWT for secure user authentication, ensuring safe information transmission and access control to various endpoints.
 
 ### Authentication Process
 
-- **User Registration (`POST /signup`)**: Users can register by providing a username, password, and role. The password is securely hashed before storage.
-- **User Login (`POST /login`)**: Upon login, users receive a JWT token that must be used in the Authorization header for accessing protected endpoints.
-- **Token Verification**: Each request to a protected endpoint requires a valid JWT token. The token is verified for its integrity and expiration.
+- **User Registration (`POST /signup`)**: New users can register with a username, password, and role. Passwords are securely hashed.
+- **User Login (`POST /login`)**: Users receive a JWT token upon login, used for accessing protected endpoints.
+- **Token Verification**: Protected endpoints require a valid JWT token for access.
 
 ### Token Model
 
-- `access_token`: The JWT token used for authentication.
-- `token_type`: The type of the token, typically "bearer".
+- `access_token`: JWT token for authentication.
+- `token_type`: Typically "bearer".
 
 ## Roles
 
-Role-based access control (RBAC) is implemented to provide different levels of access to the API based on user roles. This ensures that users can only perform actions that are appropriate for their level of access.
+The API uses RBAC to provide different access levels:
 
 ### Defined Roles
 
-- **Admin**: Has full access to all API endpoints, including creating, updating, and deleting coaches, classes, and managing user roles.
-- **User**: Limited access, typically restricted to viewing information and registering for classes.
+- **Admin**: Full access to all endpoints.
+- **User**: Can view information and register for classes.
 
 ### Role Enforcement
 
-- Role checks are performed on relevant endpoints to ensure that the user has the appropriate permissions.
-- For example, only admins can add or delete coaches, while regular users can only view coach information and register for classes.
-
-This role-based system enhances the security and integrity of the API by ensuring that users can only perform actions within their permitted scope.
+- Role checks are in place to ensure appropriate access levels are maintained.
 
 ## How to Use
 
@@ -50,9 +47,7 @@ This role-based system enhances the security and integrity of the API by ensurin
 
 - Python 3.6+
 - FastAPI
-- Uvicorn (for running the API server)
-- Passlib, bcrypt (for password hashing)
-- PyJWT (for JWT token handling)
+- Uvicorn, Passlib, bcrypt, and PyJWT
 
 ### Installation
 
@@ -73,51 +68,56 @@ uvicorn main:app --reload
 
 The `--reload` flag enables auto-reloading of the server when there are changes to the code.
 
+
 ### API Endpoints
 
-#### General
-
-- `GET /`: The root endpoint, which returns a welcome message.
-
 #### Authentication
-
 - `POST /signup`: Register a new user.
-- `POST /login`: Authenticate a user and receive an access token.
+- `POST /login`: Login for a user, returning a JWT token for authentication.
 
-#### Coaches
-
+#### Coaches Management
 - `GET /coaches`: Retrieve a list of all coaches.
-- `POST /coaches`: Add a new coach to the system.
-- `PUT /coaches/{coach_id}`: Update the information of a specific coach.
-- `DELETE /coaches/{coach_id}`: Remove a coach from the system.
+- `POST /coaches`: Add a new coach.
+- `PUT /coaches/{coach_id}`: Update a coach's details.
+- `DELETE /coaches/{coach_id}`: Delete a coach.
 
-#### Fitness Classes
-
+#### Fitness Classes Management
 - `GET /classes`: Get a list of all fitness classes.
-- `POST /classes`: Schedule a new fitness class.
-- `PUT /classes/{class_id}`: Update details of a specific fitness class.
-- `DELETE /classes/{class_id}`: Cancel a fitness class.
+- `POST /classes`: Add a new fitness class.
+- `PUT /classes/{class_id}`: Update a fitness class's details.
+- `DELETE /classes/{class_id}`: Delete a fitness class.
 
-#### Registrations
+#### User Registrations
+- `POST /register`: Register a user for a class.
+- `GET /registrations`: Get a user's registrations.
+- `GET /all-registrations`: Get registrations for all users (admin only).
+- `DELETE /cancel_registration/{class_id}`: Cancel a user's class registration.
 
-- `POST /register`: Register a user for a fitness class.
-- `GET /registrations`: Retrieve all user registrations.
+#### User Management (Admin Only)
+- `GET /users`: Retrieve all user details.
+- `PUT /users/{user_id}`: Update a user's details.
+- `DELETE /users/{user_id}`: Delete a user.
+
+#### Utility Endpoints
+- `GET /`: Root endpoint, returning a welcome message.
+- `GET /current_user`: Get details of the current user.
+
 
 ### Models
 
-The API uses Pydantic models to define the structure of the data for coaches, fitness classes, registrations, users, and authentication.
+The API uses Pydantic models to define data structures for coaches, fitness classes, registrations, and users.
 
 #### Coach Model
 
-- `coach_id`: Unique identifier for the coach.
-- `first_name`: Coach's first name.
-- `last_name`: Coach's last name.
-- `email`: Coach's email address.
-- `phone_number`: Coach's contact number.
-- `experience_years`: Number of years of coaching experience.
-- `hourly_rate_idr`: Hourly rate in Indonesian Rupiah.
-- `availability`: Coach's availability.
-- `bio`: A short biography of the coach.
+- `coach_id`: Unique identifier.
+- `first_name`: First name.
+- `last_name`: Last name.
+- `email`: Email address.
+- `phone_number`: Contact number.
+- `experience_years`: Coaching experience in years.
+- `hourly_rate_idr`: Hourly rate in IDR.
+- `availability`: Availability.
+- `bio`: Short biography.
 
 #### Fitness Class Model
 
@@ -165,7 +165,7 @@ The API uses HTTP status codes to indicate the success or failure of requests:
 
 ### Data Storage
 
-Data is stored in JSON files (`coaches.json`, `fitness_classes.json`, `registrations.json` , `users_db.json`) and is read and written using utility functions.
+Data is stored in JSON files (`coaches.json`, `fitness_classes.json`, `registrations.json`, `users_db.json`) and is read and written using utility functions.
 
 ## Deployed API Link
 
